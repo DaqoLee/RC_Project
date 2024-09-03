@@ -11,7 +11,7 @@
 
 uint8_t gear[5] = { 2, 4, 6 , 8, 10 };
 
-uint8_t SGP_Gear = 0;
+uint8_t SGP_Gear = 4;
 
 uint8_t Last_SGP_F = 0;
 uint8_t Last_SGP_B = 0;
@@ -20,6 +20,126 @@ uint8_t butNum[29] = { 19,20,8,7,6,5,22,23,21,34,33,32,24,37,25,38,36,3,1,2,4,35
 
 WzSerialPort w;
 
+
+typedef struct
+{
+    union
+    {
+        uint8_t imuData[20];
+        struct
+        {
+
+            // float AccelX;
+            // float AccelY;
+            float AccelZ;
+
+            // float GyroX;
+            // float GyroY;
+            float GyroZ;
+
+            float roll;
+            float pitch;
+            //  float yaw;
+
+            float speed;
+        };
+
+    };
+}IMU_t;
+
+IMU_t IMU;
+
+
+void receiveUDPPacket(int port) {
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        std::cerr << "WSAStartup failed.\n";
+        return;
+    }
+
+    SOCKET sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sock == INVALID_SOCKET) {
+        std::cerr << "Socket creation failed.\n";
+        WSACleanup();
+        return;
+    }
+
+    sockaddr_in serverAddr;
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(port);
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
+
+    if (bind(sock, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
+        std::cerr << "Bind failed: " << WSAGetLastError() << "\n";
+        closesocket(sock);
+        WSACleanup();
+        return;
+    }
+
+    char buffer[1024];
+    sockaddr_in clientAddr;
+    int clientAddrLen = sizeof(clientAddr);
+
+    int bytesReceived = recvfrom(sock, (char*)IMU.imuData, 20, 0, (sockaddr*)&clientAddr, &clientAddrLen);
+    if (bytesReceived == SOCKET_ERROR) {
+        std::cerr << "Recvfrom failed: " << WSAGetLastError() << "\n";
+    }
+    else {
+        buffer[bytesReceived] = '\0';
+        std::cout << "Received message: " << buffer << "\n";
+    }
+
+    closesocket(sock);
+    WSACleanup();
+}
+
+DWORD WINAPI test_Func(LPVOID lpParamter) {
+
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        std::cerr << "WSAStartup failed.\n";
+        return 0;
+    }
+
+    SOCKET sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sock == INVALID_SOCKET) {
+        std::cerr << "Socket creation failed.\n";
+        WSACleanup();
+        return 0;
+    }
+
+    sockaddr_in serverAddr;
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(2077);
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
+
+    if (bind(sock, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
+        std::cerr << "Bind failed: " << WSAGetLastError() << "\n";
+        closesocket(sock);
+        WSACleanup();
+        return 0;
+    }
+
+    char buffer[1024];
+    sockaddr_in clientAddr;
+    int clientAddrLen = sizeof(clientAddr);
+
+    while (1)
+    {
+        //receiveUDPPacket(2077);
+        int bytesReceived = recvfrom(sock, (char*)IMU.imuData, 20, 0, (sockaddr*)&clientAddr, &clientAddrLen);
+        if (bytesReceived == SOCKET_ERROR) {
+          //  std::cerr << "Recvfrom failed: " << WSAGetLastError() << "\n";
+        }
+        else {
+            buffer[bytesReceived] = '\0';
+            std::cout << "Received message: " << buffer << "\n";
+        }
+
+       // Sleep(10);
+    }
+    return 0;
+}
 
 Widget::Widget(QWidget* parent) :
     QWidget(parent),
@@ -46,11 +166,12 @@ Widget::Widget(QWidget* parent) :
     Sleep(5000);
     err = moza::setMotorLimitAngle(MAX_ANGLE, MAX_ANGLE);
 
+   // CreateThread(NULL, 0, test_Func, NULL, 0, NULL);
     std::cout << err << std::endl;
 
 
     //if (w.open("COM9", 115200, 0, 8, 1))
-    if (w.open("\\\\.\\COM16", 115200, 0, 8, 1))// if (w.open("\\\\.\\COM16", 115200, 0, 8, 1))
+    if (w.open("\\\\.\\COM11", 115200, 0, 8, 1))// if (w.open("\\\\.\\COM16", 115200, 0, 8, 1))
     {
 
     }
@@ -110,7 +231,7 @@ Widget::Widget(QWidget* parent) :
 
             //std::cout << SGP_Gear << std::endl;
             //printf("SGP_Gear:%d \r\n", SGP_Gear + 1);
-            if (d->fSteeringWheelAngle >= -(MAX_ANGLE / 2) && d->fSteeringWheelAngle <= (MAX_ANGLE / 2))
+           // if (d->fSteeringWheelAngle >= -(MAX_ANGLE / 2) && d->fSteeringWheelAngle <= (MAX_ANGLE / 2))
             {
                mazaData.fSteeringWheelAngle = d->fSteeringWheelAngle * 500 / (MAX_ANGLE / 2);
             }
@@ -127,21 +248,28 @@ Widget::Widget(QWidget* parent) :
             }
             else
             {
-                w.open("\\\\.\\COM16", 115200, 0, 8, 1);
+                w.open("\\\\.\\COM11", 115200, 0, 8, 1);
                 //w.open("COM9", 115200, 0, 8, 1);
                 std::cout << "send demo warning...";
                 std::cout << std::endl;
-            }                 //    std::cout << curr_pos << "," << knob << "," << youmen << std::endl;
+            }  //    std::cout << curr_pos << "," << knob << "," << youmen << std::endl;
+
+            if (w.receive(returnData.Data, 16) == 16)
+            {
+                // std::cout<<"---" << returnData.fSteeringWheelAngle << std::endl;
+            }
 
             currentValue2 = (d->throttle + MAX_BRAKE) * 500 / (2 * MAX_BRAKE);
+          
         }
+        currentValue = abs(IMU.speed/100);
 #endif 
 
         //currentValue = 10;
         //Ë¢ÐÂ¿Ø¼þ
         update();
         });
-    timer->start(25);
+    timer->start(20);
 }
 
 Widget::~Widget()

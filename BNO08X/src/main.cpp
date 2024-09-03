@@ -38,7 +38,7 @@ BNO080 myIMU;
 
 //AsyncUDP  udp;//声明UDP对象
 WiFiUDP Udp;
-const char* wifi_SSID="RC";  //存储AP的名称信息
+const char* wifi_SSID="Work";  //存储AP的名称信息
 const char* wifi_Password="xhaxx518";  //存储AP的密码信息
 
 uint16_t udp_port=1122;  //存储需要监听的端口号
@@ -218,12 +218,12 @@ void taskUDPsend( void * parameter )
     // float pitch = (myIMU.getPitch()) * 180.0 / PI; // Convert pitch to degrees
     // float yaw = (myIMU.getYaw()) * 180.0 / PI; // Convert yaw / heading to degrees
 
-    Udp.beginPacket(remote_IP, 4124); //准备发送数据
-    Udp.write(IMU.imuData, 16);
-    Udp.println();
-    Udp.endPacket();            //发送数据
+    // Udp.beginPacket(remote_IP, 4124); //准备发送数据
+    // Udp.write(IMU.imuData, 16);
+    // Udp.println();
+    // Udp.endPacket();            //发送数据
 
-   // Serial.printf("roll:%.2f   pitch:%.2f  \r\n",IMU.roll, IMU.pitch);
+    Serial.printf("roll:%.2f   pitch:%.2f  \r\n",IMU.roll, IMU.pitch);
     //Serial.println();
   }
 #endif

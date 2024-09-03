@@ -22,8 +22,8 @@ private:
     Ui::Widget* ui;
     int startAngle;//起始角度
     double angle;
-    float currentValue;//当前值
-    float currentValue2;
+    int currentValue;//当前值
+    int currentValue2;
     QTimer* timer;
     bool flag;//指针转动标志位
 

@@ -453,30 +453,30 @@ void taskSerialRead( void * parameter )
     }
 
    
-    numBytes = Serial1.available();
+    // numBytes = Serial1.available();
 
 
    
-    if (numBytes == 14) 
-    {
-        // 逐个读取字节并存储到字节数组中
-      Serial1.read(RxData,numBytes);
-     // Serial1.write(UserData.data,numBytes);
-     // Serial1.println("er1");
-      if(RxData[0] == 0x5A)
-      {
-         memcpy(UserData.data,RxData,numBytes);
-        // Serial.write(UserData.data,numBytes);
-        // Serial1.println("err2");
-        Serial.println(UserData.ch1);
-      }
+    // if (numBytes == 14) 
+    // {
+    //     // 逐个读取字节并存储到字节数组中
+    //   Serial1.read(RxData,numBytes);
+    //  // Serial1.write(UserData.data,numBytes);
+    //  // Serial1.println("er1");
+    //   if(RxData[0] == 0x5A)
+    //   {
+    //      memcpy(UserData.data,RxData,numBytes);
+    //     // Serial.write(UserData.data,numBytes);
+    //     // Serial1.println("err2");
+    //     Serial.println(UserData.ch1);
+    //   }
      
-      //Serial1.printf("Angle:%.2f   brake:%d   throttle:%d  \r\n",MozaData.fSteeringWheelAngle, MozaData.brake, MozaData.throttle);
-      digitalWrite(9,HIGH);
-    }
+    //   //Serial1.printf("Angle:%.2f   brake:%d   throttle:%d  \r\n",MozaData.fSteeringWheelAngle, MozaData.brake, MozaData.throttle);
+    //   digitalWrite(9,HIGH);
+    // }
 
     //Serial1.printf("Angle:%.2f   brake:%d   throttle:%d  \r\n",MozaData.fSteeringWheelAngle, MozaData.brake, MozaData.throttle);
-      delay(5);
+      delay(10);
       digitalWrite(9,LOW);
 
   }
@@ -553,12 +553,12 @@ void loop()
 
   // RCchannel[0] = ch_check(UserData.ch1);
   // RCchannel[1] = ch_check(UserData.ch2);
-  RCchannel[2] = ch_check(UserData.ch1);
-  RCchannel[3] = ch_check(UserData.ch2);
-  RCchannel[4] = ch_check(UserData.ch3);
-  RCchannel[5] = ch_check(UserData.ch4);
-  RCchannel[6] = ch_check(UserData.ch5);
-  RCchannel[7] = ch_check(UserData.ch6);
+  // RCchannel[2] = ch_check(UserData.ch1);
+  // RCchannel[3] = ch_check(UserData.ch2);
+  // RCchannel[4] = ch_check(UserData.ch3);
+  // RCchannel[5] = ch_check(UserData.ch4);
+  // RCchannel[6] = ch_check(UserData.ch5);
+  // RCchannel[7] = ch_check(UserData.ch6);
 
   RMTsend(RCchannel,8);
   Serial.printf("ch1:%d   ch3:%d  \r\n",RCchannel[0], RCchannel[1]);

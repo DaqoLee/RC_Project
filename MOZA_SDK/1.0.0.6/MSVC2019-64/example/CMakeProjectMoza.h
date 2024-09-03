@@ -64,6 +64,7 @@ typedef struct
 
 
 extern MOZA_t mazaData;
+extern MOZA_t returnData;
 
 #endif
 
