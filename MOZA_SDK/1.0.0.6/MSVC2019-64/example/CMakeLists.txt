@@ -16,7 +16,10 @@ cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
  find_package(Qt${QT_VERSION_MAJOR}
          REQUIRED COMPONENTS
          Test
-         Widgets)
+         Widgets
+         Network
+         SerialPort
+ )
 #加入openSSL库
 #find_package(OpenSSL REQUIRED)
 #加入RS21_sdk库，根据sdk的路径添加
@@ -38,7 +41,8 @@ target_link_libraries(APITest
         ${RS21_sdk}/lib/MOZA_SDK.lib
         ws2_32
         winmm
-       
+       Qt6::Network
+       Qt6::SerialPort
  #       WinSock2
     )
 

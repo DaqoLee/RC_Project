@@ -44,7 +44,7 @@ const char* wifi_Password="xhaxx518";  //存储AP的密码信息
 uint16_t udp_port=1122;  //存储需要监听的端口号
 
 char incomingPacket[255];  //存储Udp客户端发过来的数据
-IPAddress remote_IP(192,168,50,75);// 自定义远程监听 IP 地址//192,168,57,252//192.158.56.19 //192,168,50,30 192,168,50,70//
+IPAddress remote_IP(192,168,57,12);// 自定义远程监听 IP 地址//192,168,57,252//192.158.56.19 //192,168,50,30 192,168,50,70//
 
 
 typedef struct 
